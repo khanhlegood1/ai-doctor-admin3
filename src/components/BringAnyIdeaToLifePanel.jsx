@@ -26,6 +26,13 @@ export default function BringAnyIdeaToLifePanel({ onNext, nextLabel, onPrev, pre
   // thread bị chặn giữa chừng lúc đang render. Áp dụng đúng pattern đó ở
   // đây: chỉ mount iframe thật SAU KHI người dùng bấm nút "Mở công cụ".
   const [started, setStarted] = useState(false)
+  const appSrc = (() => {
+    if (typeof window === 'undefined') return BRING_ANY_IDEA_TO_LIFE_APP_URL
+    const url = new URL(BRING_ANY_IDEA_TO_LIFE_APP_URL, window.location.origin)
+    const linkId = new URLSearchParams(window.location.search).get('linkid')
+    if (linkId) url.searchParams.set('linkid', linkId)
+    return url.toString()
+  })()
 
   // The landing-page menu is an explicit request to open the experience, so
   // show the game itself immediately and let it occupy the entire viewport.
@@ -47,8 +54,8 @@ export default function BringAnyIdeaToLifePanel({ onNext, nextLabel, onPrev, pre
       >
         <iframe
           title="Bring Any Idea to Life"
-          src={BRING_ANY_IDEA_TO_LIFE_APP_URL}
-          allow="camera; microphone; fullscreen; clipboard-read; clipboard-write"
+          src={appSrc}
+          allow="camera; microphone; fullscreen; clipboard-read; clipboard-write; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           style={{ display: 'block', width: '100%', height: '100%', border: 0 }}
         />
